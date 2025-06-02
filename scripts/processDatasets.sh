@@ -41,7 +41,7 @@ else
 fi
 
 # Build the processing binary
-echo "[INFO] Building processor..."
+echo "[INFO] Building process executable..."
 cmake --build --preset "${BUILD_TYPE}" -j "${PROCESS_JOBS}" --target process
 
 # Ensure required directories exist
