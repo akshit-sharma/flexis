@@ -1,0 +1,31 @@
+name: Downloading Datasets
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  datagraph-download:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt update && sudo apt install -y cmake ninja-build g++ clang
+
+      - name: Set up VCPKG
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git
+          ./vcpkg/bootstrap-vcpkg.sh
+        env:
+          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+
+      - name: Download and process the datasets 
+        run: bash ./scripts/processDatasets.sh --grami
+        env:
+          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+
+      - name: list the generated datasets
+        run: ls ./data/processed/*.vf3.bin | sed 's-./data/processed/--g' | sed 's/.vf3.bin//g'
+

@@ -1,0 +1,12 @@
+{
+  "name": "flexis",
+  "version": "0.1.0",
+  "dependencies": [
+    "cli11",
+    "fmt",
+    "indicators",
+    "nlohmann-json",
+    "boost-graph",
+    "boost-range"
+  ]
+}

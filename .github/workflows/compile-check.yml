@@ -1,0 +1,36 @@
+name: Check Compile Flexis
+
+on:
+  push:
+    - 'src/**'
+    - '.github/workflows/check-compile.yml'
+  workflow_dispatch:
+
+jobs:
+  check-flexis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt update && sudo apt install -y cmake ninja-build g++ clang
+
+      - name: Set up VCPKG
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git
+          ./vcpkg/bootstrap-vcpkg.sh
+        env:
+          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+
+      - name: Configure with CMake (Debug Preset)
+        run: cmake --preset debug
+        env:
+          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+
+      - name: Build Flexis (Debug Preset)
+        run: cmake --build --preset debug
+
+      - name: Run Flexis --help to verify binary
+        run: ./build/debug/bin/flexis --help
+
