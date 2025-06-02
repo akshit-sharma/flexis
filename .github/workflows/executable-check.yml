@@ -6,6 +6,7 @@ on:
 
 jobs:
   compile-flexis:
+    if: github.repository_owner == 'akshit-sharma' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,6 +31,7 @@ jobs:
           path: ./build/release/bin/flexis
 
   download-datasets:
+    if: github.repository_owner == 'akshit-sharma' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -52,6 +54,7 @@ jobs:
           path: ./data/processed/*.vf3.bin
 
   run-flexis:
+    if: github.repository_owner == 'akshit-sharma' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     needs: [compile-flexis, download-datasets]
     steps:
