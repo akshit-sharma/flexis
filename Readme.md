@@ -2,6 +2,8 @@
 
 ## Prerequisties
 
+- Install [CMake](https://github.com/Kitware/CMake)
+- Install [Ninja](https://github.com/ninja-build/ninja)
 - Install [vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started?pivots=shell-bash) and set VCPKG_ROOT environment
 
 ## Generating
@@ -64,6 +66,9 @@ OPTIONS:
 
 
 ### Command example
+
+#### Example command 1
 ```./build/release/bin/flexis --input ./data/processed/p2p-Gnutella08.vf3.bin --support 55 --slider 1.0```
+#### Example command 2
 ```./build/release/bin/flexis --input ./data/processed/mico.vf3.bin --support 8000 --slider 0.9```
 

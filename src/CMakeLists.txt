@@ -50,4 +50,4 @@ endfunction()
 
 compile(flexis mining.cpp "" "" "" "")
 compile(flexisSplit miningTiming.cpp "" "" "" "")
-
+compile(process process.cpp "" "" "" "")
