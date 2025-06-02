@@ -61,7 +61,7 @@ done
 for extracted in ./data/extracted/*.txt; do
   [ -e "$extracted" ] || continue
   base_name=$(basename "$extracted" .txt)
-  out_file="./data/processed/$base_name.bin"
+  out_file="./data/processed/$base_name"
   if [ ! -f "$out_file" ]; then
     echo "[INFO] Processing extracted: $base_name"
     ./"${BUILD_DIR}/bin/process" -i "$extracted" -o "$out_file" --format citPatentsTxt --seed 0 $EXTRA_ARGS
@@ -84,7 +84,7 @@ fi
 for lg_file in ./data/lg/*.lg; do
   [ -e "$lg_file" ] || continue
   base_name=$(basename "$lg_file" .lg)
-  out_file="./data/processed/$base_name.bin"
+  out_file="./data/processed/$base_name"
   if [ ! -f "$out_file" ]; then
     echo "[INFO] Processing GraMi: $base_name"
     ./"${BUILD_DIR}/bin/process" -i "$lg_file" -o "$out_file" --format lg --seed 0 $EXTRA_ARGS
@@ -95,7 +95,7 @@ done
 for custom_file in ./data/custom/*.txt; do
   [ -e "$custom_file" ] || continue
   base_name=$(basename "$custom_file" .txt)
-  out_file="./data/processed/$base_name.bin"
+  out_file="./data/processed/$base_name"
   if $CUSTOM || [ ! -f "$out_file" ]; then
     echo "[INFO] Processing custom: $base_name"
     ./"${BUILD_DIR}/bin/process" -i "$custom_file" -o "$out_file" --format custom --seed 0 $EXTRA_ARGS

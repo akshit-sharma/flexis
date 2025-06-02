@@ -6,7 +6,6 @@ on:
 
 jobs:
   check-flexis:
-    if: github.repository_owner == 'akshit-sharma' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
