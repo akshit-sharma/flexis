@@ -24,7 +24,6 @@
 #include <fmt/format.h>
 
 #include "NodeClassifier.hpp"
-#include "instruction.hpp"
 #include "matchState.hpp"
 
 namespace Vf3Frequency {

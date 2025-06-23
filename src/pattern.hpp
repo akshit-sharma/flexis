@@ -30,8 +30,6 @@
 #include <vf3lib/ARGraph.hpp>
 #include <vf3lib/VFLib.h>
 
-#include "generateInstructions.hpp"
-
 MatchingSchedule::MatchingSchedule(uint32_t pSize) { // NOLINT(misc-definitions-in-headers)
   mVertexToMatchingOrder.resize(pSize, std::numeric_limits<uint32_t>::max());
   mMatchingOrderToVertex.resize(pSize, std::numeric_limits<uint32_t>::max());
@@ -63,10 +61,6 @@ class Vf3Pattern : public vflib::ARGLoader<uint32_t, uint32_t> {
     std::shared_ptr<bliss::Digraph> mBlissGraph; // canonical_form_
     Permutation mCanonicalPermutation;
     Permutation mCanonicalPermutationInverse;
-
-#ifdef D_CUSTOM_FREQUENCY
-    instruction::Instructions mInstructions;
-#endif
 
     template <typename T>
     void edgeArrow(T &ss, uint i, uint j) const {
@@ -277,18 +271,11 @@ class Vf3Pattern : public vflib::ARGLoader<uint32_t, uint32_t> {
     Vf3Pattern(LabelsVector pLabels, std::vector<std::pair<uint32_t, uint32_t>> pEdges)
         : mLabels(pLabels)
     {
-#ifdef D_CUSTOM_FREQUENCY
-      assert(mInstructions.size() == 0);
-#endif
       for (auto [src, dst] : pEdges) {
         mEdges[src].insert(std::make_pair(dst, kDefaultEdgeLabel));
         mIncomingEdges[dst].insert(std::make_pair(src, kDefaultEdgeLabel));
       }
       mMatchingSchedule = GraphHelpers::generateSchedule(mLabels.size(), mEdges, mLabels, mIncomingEdges);
-
-#ifdef D_CUSTOM_FREQUENCY
-      mInstructions = GraphHelpers::generateInstructions<instruction::Instruction>(mLabels, mEdges);
-#endif
 
       for (auto labels : mLabels) {
         boost::add_vertex(labels, mBoostGraph);
@@ -307,18 +294,12 @@ class Vf3Pattern : public vflib::ARGLoader<uint32_t, uint32_t> {
     Vf3Pattern(LabelsVector pLabels, std::vector<std::tuple<uint32_t, uint32_t, uint32_t>> pLabelledEdges)
         : mLabels(pLabels)
     {
-#ifdef D_CUSTOM_FREQUENCY
-      assert(mInstructions.size() == 0);
-#endif
       for (auto [src, dst, label] : pLabelledEdges) {
         mEdges[src].insert(std::make_pair(dst, label));
         mIncomingEdges[dst].insert(std::make_pair(src, label));
       }
       mMatchingSchedule = GraphHelpers::generateSchedule(mLabels.size(), mEdges, mLabels, mIncomingEdges);
 
-#ifdef D_CUSTOM_FREQUENCY
-      mInstructions = GraphHelpers::generateInstructions<instruction::Instruction>(mLabels, mEdges);
-#endif
 
       for (auto labels : mLabels) {
         boost::add_vertex(labels, mBoostGraph);
@@ -335,9 +316,6 @@ class Vf3Pattern : public vflib::ARGLoader<uint32_t, uint32_t> {
     }
 
     explicit Vf3Pattern(const CanonicalShorthand &pShorthand) : mBoostGraph(GraphHelpers::boostFromShorthand(pShorthand)) {
-#ifdef D_CUSTOM_FREQUENCY
-      assert(mInstructions.size() == 0);
-#endif
       mIsClique = GraphHelpers::isClique(mBoostGraph);
       if (mIsClique) {
         mCliqueCanonPermutation = MinimumPermutation(mBoostGraph);
@@ -350,17 +328,11 @@ class Vf3Pattern : public vflib::ARGLoader<uint32_t, uint32_t> {
 
       mMatchingSchedule = GraphHelpers::generateSchedule(mLabels.size(), mEdges, mLabels, mIncomingEdges);
 
-#ifdef D_CUSTOM_FREQUENCY
-      mInstructions = GraphHelpers::generateInstructions<instruction::Instruction>(mLabels, mEdges);
-#endif
 
       std::tie(mBlissGraph, mCanonicalPermutation, mCanonicalPermutationInverse) = GraphHelpers::canonicalForm(mBoostGraph);
     }
 
     Vf3Pattern(const BoostGraph &pBG) : mBoostGraph(pBG), mIsClique(GraphHelpers::isClique(pBG)) {
-#ifdef D_CUSTOM_FREQUENCY
-      assert(mInstructions.size() == 0);
-#endif
       if (mIsClique) {
         mCliqueCanonPermutation = MinimumPermutation(mBoostGraph);
         mCliqueShorthand = getCanonicalShorthand(mBoostGraph, mCliqueCanonPermutation);
@@ -372,9 +344,6 @@ class Vf3Pattern : public vflib::ARGLoader<uint32_t, uint32_t> {
 
       mMatchingSchedule = GraphHelpers::generateSchedule(mLabels.size(), mEdges, mLabels, mIncomingEdges);
 
-#ifdef D_CUSTOM_FREQUENCY
-      mInstructions = GraphHelpers::generateInstructions<instruction::Instruction>(mLabels, mEdges);
-#endif
 
       std::tie(mBlissGraph, mCanonicalPermutation, mCanonicalPermutationInverse) = GraphHelpers::canonicalForm(mBoostGraph);
     }
@@ -391,11 +360,7 @@ class Vf3Pattern : public vflib::ARGLoader<uint32_t, uint32_t> {
       throw std::runtime_error("Not implemented");
     }
 
-#ifdef D_CUSTOM_FREQUENCY
-    instruction::Instructions instructions() const { return mInstructions; }
-#endif
-
-    virtual uint32_t NodeCount() const override { return mLabels.size(); }
+   virtual uint32_t NodeCount() const override { return mLabels.size(); }
     virtual uint32_t GetNodeAttr(vflib::nodeID_t node) const override {
       return mLabels.at(node);
     }
@@ -878,14 +843,6 @@ namespace GraphHelpers {
       mrp.add_ex_plan(plans[bindex], 0, false);
     }
     return mrp;
-  }
-
-  template<typename Instruction>
-  std::vector<Instruction> generateInstructions(const std::vector<uint32_t> &pLabels,
-      const LabelledEdges &pEdges) {
-      auto graphlet = GraphHelpers::generateGraphlet(pLabels, pEdges);
-      auto mrp = GraphHelpers::generatePlan(graphlet);
-    return generatorInstructions::generateInstructions<RestSet>(mrp);
   }
 
   BoostGraph boostFromShorthand(const CanonicalShorthand& pShorthand) { // NOLINT(misc-definitions-in-headers)
