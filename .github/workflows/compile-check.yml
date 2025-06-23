@@ -13,13 +13,12 @@ jobs:
         compiler:
           - gcc-11
           - gcc-latest
-          - clang-latest
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt update && sudo apt install -y cmake ninja-build g++-11 g++ clang
+        run: sudo apt update && sudo apt install -y cmake ninja-build g++-11 g++
 
       - name: Select Compiler
         run: |
