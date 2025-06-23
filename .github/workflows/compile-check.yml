@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         compiler:
+          - gcc-9
           - gcc-11
           - gcc-latest
 
@@ -18,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt update && sudo apt install -y cmake ninja-build g++-11 g++
+        run: sudo apt update && sudo apt install -y cmake ninja-build g++-11 g++-9 g++
 
       - name: Select Compiler
         run: |
@@ -26,6 +27,10 @@ jobs:
             gcc-11)
               echo "CC=gcc-11" >> $GITHUB_ENV
               echo "CXX=g++-11" >> $GITHUB_ENV
+              ;;
+            gcc-9)
+              echo "CC=gcc-9" >> $GITHUB_ENV
+              echo "CXX=g++-9" >> $GITHUB_ENV
               ;;
             gcc-latest)
               echo "CC=gcc" >> $GITHUB_ENV
