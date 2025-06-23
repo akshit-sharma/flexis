@@ -8,11 +8,40 @@ jobs:
   check-flexis:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        compiler:
+          - gcc-11
+          - clang-12
+          - gcc-latest
+          - clang-latest
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt update && sudo apt install -y cmake ninja-build g++ clang
+        run: sudo apt update && sudo apt install -y cmake ninja-build g++-11 clang-12 g++ clang
+
+      - name: Select Compiler
+        run: |
+          case "${{ matrix.compiler }}" in
+            gcc-11)
+              echo "CC=gcc-11" >> $GITHUB_ENV
+              echo "CXX=g++-11" >> $GITHUB_ENV
+              ;;
+            clang-12)
+              echo "CC=clang-12" >> $GITHUB_ENV
+              echo "CXX=clang++-12" >> $GITHUB_ENV
+              ;;
+            gcc-latest)
+              echo "CC=gcc" >> $GITHUB_ENV
+              echo "CXX=g++" >> $GITHUB_ENV
+              ;;
+            clang-latest)
+              echo "CC=clang" >> $GITHUB_ENV
+              echo "CXX=clang++" >> $GITHUB_ENV
+              ;;
+          esac
 
       - name: Set up VCPKG
         run: |
